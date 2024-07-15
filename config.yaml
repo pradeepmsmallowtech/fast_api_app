@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "fastapi"
+  namespace: "default"
+  labels:
+    app: "fastapi"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "fastapi"
+  template:
+    metadata:
+      labels:
+        app: "fastapi"
+    spec:
+      containers:
+      - name: "fast-api-app-1"
+        image: "pradeepmallow/fast_api_app:latest"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "fastapi-hpa-mijn"
+  namespace: "default"
+  labels:
+    app: "fastapi"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "fastapi"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
